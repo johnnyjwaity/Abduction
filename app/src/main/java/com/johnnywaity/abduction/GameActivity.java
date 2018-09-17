@@ -146,6 +146,9 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         for(int i = 0; i < 2; i++){
             Object3D[] objects = Loader.loadOBJ(getResources().openRawResource(R.raw.ground), getResources().openRawResource(R.raw.groundmat), 1);
             for(Object3D o : objects){
+                if(o != objects[0]){
+                    o.addParent(objects[0]);
+                }
                 o.translate(0, 0, 0);
                 o.setTexture("grassBlock");
                 //o.rotateX((float)Math.PI);

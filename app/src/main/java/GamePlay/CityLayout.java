@@ -76,9 +76,9 @@ public class CityLayout extends Layout {
         // (-5.1, 4)      (0, 4)      (5.1, 4)
         // (-5.1, -4.3)  (0, -4.3)  (5.1, -4.3)
 
-        Vector2[] path = {new Vector2(-5.1f + x, 4 + z), new Vector2(0 + x, 4 + z), new Vector2(0 + x, -4.3f + z),
+        Vector2[] path = {new Vector2(-5.1f, 4), new Vector2(0, 4), new Vector2(0, -4.3f),
                 new Vector2(5.1f, -4.3f), new Vector2(5.1f, 4), new Vector2(0, 4),
-                new Vector2(0 + x, -4.3f + z), new Vector2(-5.1f + x, -4.3f + z)};
+                new Vector2(0, -4.3f), new Vector2(-5.1f, -4.3f)};
 
 
 

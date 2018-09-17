@@ -29,11 +29,11 @@ public abstract class Layout {
             object.addParent(base);
         }
         base.translate(x, 0, z);
-        for(Object3D object : objects){
-            Matrix transform = object.getWorldTransformation().cloneMatrix();
-            object.removeParent(base);
-            object.setTranslationMatrix(transform);
-        }
+//        for(Object3D object : objects){
+//            Matrix transform = object.getWorldTransformation().cloneMatrix();
+//            object.removeParent(base);
+//            object.setTranslationMatrix(transform);
+//        }
     }
 
 }
