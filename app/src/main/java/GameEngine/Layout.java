@@ -22,7 +22,7 @@ public abstract class Layout {
         objects.add(obj);
     }
 
-    public abstract void populate(Resources res, float x, float z);
+    public abstract void populate(Resources res);
 
     public void finalize(float x, float z){
         for(Object3D object : objects){

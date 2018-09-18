@@ -2,7 +2,6 @@ package com.johnnywaity.abduction;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.res.Resources;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -12,28 +11,22 @@ import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.Light;
 import com.threed.jpct.Loader;
 import com.threed.jpct.Object3D;
-import com.threed.jpct.Primitives;
 import com.threed.jpct.RGBColor;
 import com.threed.jpct.SimpleVector;
 import com.threed.jpct.Texture;
 import com.threed.jpct.TextureManager;
 import com.threed.jpct.World;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import GameEngine.ChunkLoader;
 import GameEngine.GameObject;
 import GameEngine.Input;
 import GameEngine.TimeManager;
-import GameEngine.Vector2;
-import GamePlay.Atractable;
 import GamePlay.CameraController;
-import GamePlay.CarController;
 import GamePlay.CityLayout;
 import GamePlay.UFOController;
 
@@ -110,6 +103,8 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         Texture taxiTex = new Texture(getResources().openRawResource(R.raw.taxitex));
         Texture blueCar = new Texture(getResources().openRawResource(R.raw.carb));
         Texture purpleCar = new Texture(getResources().openRawResource(R.raw.carp));
+        Texture pineTree = new Texture(64, 64, new RGBColor(0, 128, 0));
+        Texture tree = new Texture(getResources().openRawResource(R.raw.lowpolytree));
 
         TextureManager.getInstance().addTexture("grassBlock", grassBlock);
         TextureManager.getInstance().addTexture("brownBuilding", brownBuilding);
@@ -124,6 +119,8 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         TextureManager.getInstance().addTexture("taxi", taxiTex);
         TextureManager.getInstance().addTexture("carp", purpleCar);
         TextureManager.getInstance().addTexture("carb", blueCar);
+        TextureManager.getInstance().addTexture("pineTree", pineTree);
+        TextureManager.getInstance().addTexture("tree", tree);
 
         Object3D ufo = Loader.load3DS(getResources().openRawResource(R.raw.ufo), 0.5f)[0];
         ufo.translate(2, -4, 0);
@@ -141,24 +138,27 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         tractorBeam.addParent(ufo);
 
 
+        Class[] chunks = {CityLayout.class};
+        ChunkLoader chunkLoader = new ChunkLoader(chunks, getResources());
+        chunkLoader.start();
 
 
-        for(int i = 0; i < 2; i++){
-            Object3D[] objects = Loader.loadOBJ(getResources().openRawResource(R.raw.ground), getResources().openRawResource(R.raw.groundmat), 1);
-            for(Object3D o : objects){
-                if(o != objects[0]){
-                    o.addParent(objects[0]);
-                }
-                o.translate(0, 0, 0);
-                o.setTexture("grassBlock");
-                //o.rotateX((float)Math.PI);
-                world.addObject(o);
-            }
-
-            CityLayout cityLayout = new CityLayout(objects[0]);
-            cityLayout.populate(getResources(), (i * 15), 0);
-            cityLayout.finalize((i * 15), 0);
-        }
+//        for(int i = 0; i < 2; i++){
+//            Object3D[] objects = Loader.loadOBJ(getResources().openRawResource(R.raw.ground), getResources().openRawResource(R.raw.groundmat), 1);
+//            for(Object3D o : objects){
+//                if(o != objects[0]){
+//                    o.addParent(objects[0]);
+//                }
+//                o.translate(0, 0, 0);
+//                o.setTexture("grassBlock");
+//                //o.rotateX((float)Math.PI);
+//                world.addObject(o);
+//            }
+//
+//            CityLayout cityLayout = new CityLayout(objects[0]);
+//            cityLayout.populate(getResources());
+//            cityLayout.finalize((i * 16), (i*16));
+//        }
 
         world.getCamera().setPosition(0, -5, 0);
         world.getCamera().rotateCameraY(((float)(-Math.PI / 4)));

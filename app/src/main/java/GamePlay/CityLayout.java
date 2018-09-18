@@ -6,7 +6,12 @@ import com.johnnywaity.abduction.GameActivity;
 import com.johnnywaity.abduction.R;
 import com.threed.jpct.Loader;
 import com.threed.jpct.Object3D;
+import com.threed.jpct.RGBColor;
+import com.threed.jpct.Texture;
+import com.threed.jpct.TextureInfo;
 import com.threed.jpct.World;
+
+import java.util.Random;
 
 import GameEngine.GameObject;
 import GameEngine.Layout;
@@ -21,7 +26,7 @@ public class CityLayout extends Layout {
     }
     
     @Override
-    public void populate(Resources res, float x, float z) {
+    public void populate(Resources res) {
         World world = GameActivity.world;
 
         Object3D[] roads = Loader.load3DS(res.openRawResource(R.raw.roadsquare), 1);
@@ -112,6 +117,23 @@ public class CityLayout extends Layout {
         c2g.addScript(new CarController(path, 2));
         GameActivity.objects.add(c2g);
         super.addObject(c2);
+
+
+        // (0.6, 3.2)  (4.7, 3.2)
+        // (0.6, -1.7) (4.7, -1.7)
+        for(int i = 0; i < 30; i++){
+            Object3D tree = Loader.load3DS(res.openRawResource(R.raw.tree), 0.3f)[0];
+            tree.translate(0.6f + (float)(Math.random() * (4.7f - 0.6f)), -1, -1.7f + (float)(Math.random() * (3.2 + 1.7)));
+            tree.setTexture("tree");
+            world.addObject(tree);
+            GameObject tg = new GameObject(tree);
+            tg.addScript(new Atractable());
+            GameActivity.objects.add(tg);
+            super.addObject(tree);
+        }
+
+
+
     }
 
     private String randomTex(){
