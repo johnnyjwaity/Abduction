@@ -26,9 +26,9 @@ public class ChunkLoader {
     }
 
     public void start(){
-        for(int r = -2; r < 3; r++){
-            for(int c = -2; c < 3; c++){
-                Object3D[] objects = Loader.loadOBJ(resources.openRawResource(R.raw.ground), resources.openRawResource(R.raw.groundmat), 1);
+        for(int r = -1; r < 2; r++){
+            for(int c = -1; c < 2; c++){
+                Object3D[] objects = ObjectManager.getSharedInstance().getObject("ground");
                 for(Object3D o : objects){
                     if(o != objects[0]){
                         o.addParent(objects[0]);

@@ -44,6 +44,7 @@ public class Atractable implements AttachableScript {
                 if(newScale > 0){
                     gameObject.getObject().setScale(newScale);
                 }else{
+                    GameActivity.scoreNum += 5;
                     gameObject.remove();
                 }
             }

@@ -15,6 +15,7 @@ import java.util.Random;
 
 import GameEngine.GameObject;
 import GameEngine.Layout;
+import GameEngine.ObjectManager;
 import GameEngine.Vector2;
 
 public class CityLayout extends Layout {
@@ -29,7 +30,7 @@ public class CityLayout extends Layout {
     public void populate(Resources res) {
         World world = GameActivity.world;
 
-        Object3D[] roads = Loader.load3DS(res.openRawResource(R.raw.roadsquare), 1);
+        Object3D[] roads = ObjectManager.getSharedInstance().getObject("roadsquare");;
         for (Object3D road : roads){
             road.translate(0, -1, 0);
             road.setTexture("roadSquare");
@@ -38,8 +39,9 @@ public class CityLayout extends Layout {
         }
 
         for(int i = 0; i < 7; i ++){
-            Object3D[] buildings = Loader.load3DS(res.openRawResource((Math.random() > 0.5) ? R.raw.bb : R.raw.b2), 0.4f);
+            Object3D[] buildings = (Math.random() > 0.5) ? ObjectManager.getSharedInstance().getObject("bb") : ObjectManager.getSharedInstance().getObject("b2");
             for (Object3D building : buildings){
+                //building.setScale(0.4f);
                 building.translate(-4.5f + (i * 1.5f), -1, 4.7f);
                 building.setTexture(randomTex());
                 world.addObject(building);
@@ -48,8 +50,9 @@ public class CityLayout extends Layout {
         }
 
         for(int i = 0; i < 3; i ++){
-            Object3D[] buildings = Loader.load3DS(res.openRawResource((Math.random() > 0.5) ? R.raw.bb : R.raw.b2), 0.4f);
+            Object3D[] buildings = (Math.random() > 0.5) ? ObjectManager.getSharedInstance().getObject("bb") : ObjectManager.getSharedInstance().getObject("b2");
             for (Object3D building : buildings){
+
                 building.translate(-4.1f + (i * 1.5f), -1, -3.5f);
                 building.setTexture(randomTex());
                 world.addObject(building);
@@ -58,7 +61,7 @@ public class CityLayout extends Layout {
         }
 
         for(int i = 0; i < 3; i ++){
-            Object3D[] buildings = Loader.load3DS(res.openRawResource((Math.random() > 0.5) ? R.raw.bb : R.raw.b2), 0.4f);
+            Object3D[] buildings = (Math.random() > 0.5) ? ObjectManager.getSharedInstance().getObject("bb") : ObjectManager.getSharedInstance().getObject("b2");
             for (Object3D building : buildings){
                 building.translate(1.2f + (i * 1.4f), -1, -3.5f);
                 building.setTexture(randomTex());
@@ -68,7 +71,7 @@ public class CityLayout extends Layout {
         }
 
         for(int i = 0; i < 2; i ++){
-            Object3D[] buildings = Loader.load3DS(res.openRawResource((Math.random() > 0.5) ? R.raw.bb : R.raw.b2), 0.4f);
+            Object3D[] buildings = (Math.random() > 0.5) ? ObjectManager.getSharedInstance().getObject("bb") : ObjectManager.getSharedInstance().getObject("b2");
             for (Object3D building : buildings){
                 building.translate(-1.2f , -1, -1 + (i * 1.4f));
                 building.rotateY((float)-Math.PI /2);
@@ -87,7 +90,7 @@ public class CityLayout extends Layout {
 
 
 
-        Object3D taxi = Loader.load3DS(res.openRawResource(R.raw.taxi), 0.2f)[0];
+        Object3D taxi = ObjectManager.getSharedInstance().getObject("taxi")[0];
         taxi.translate(-5.1f, -1, 4f);
         taxi.setTexture("taxi");
         world.addObject(taxi);
@@ -97,7 +100,7 @@ public class CityLayout extends Layout {
         GameActivity.objects.add(gTaxi);
         super.addObject(taxi);
 
-        Object3D c1 = Loader.load3DS(res.openRawResource(R.raw.taxi), 0.2f)[0];
+        Object3D c1 = ObjectManager.getSharedInstance().getObject("taxi")[0];
         c1.translate(5.1f, -1, -4.3f);
         c1.setTexture("carp");
         c1.rotateY((float) Math.PI / 2);
@@ -108,7 +111,7 @@ public class CityLayout extends Layout {
         GameActivity.objects.add(c1g);
         super.addObject(c1);
 
-        Object3D c2 = Loader.load3DS(res.openRawResource(R.raw.taxi), 0.2f)[0];
+        Object3D c2 = ObjectManager.getSharedInstance().getObject("taxi")[0];
         c2.translate(0f, -1, -4.3f);
         c2.setTexture("carb");
         world.addObject(c2);
@@ -122,7 +125,7 @@ public class CityLayout extends Layout {
         // (0.6, 3.2)  (4.7, 3.2)
         // (0.6, -1.7) (4.7, -1.7)
         for(int i = 0; i < 30; i++){
-            Object3D tree = Loader.load3DS(res.openRawResource(R.raw.tree), 0.3f)[0];
+            Object3D tree = ObjectManager.getSharedInstance().getObject("tree")[0];
             tree.translate(0.6f + (float)(Math.random() * (4.7f - 0.6f)), -1, -1.7f + (float)(Math.random() * (3.2 + 1.7)));
             tree.setTexture("tree");
             world.addObject(tree);

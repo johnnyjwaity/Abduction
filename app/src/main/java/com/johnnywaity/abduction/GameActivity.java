@@ -2,10 +2,14 @@ package com.johnnywaity.abduction;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.Light;
@@ -25,6 +29,7 @@ import javax.microedition.khronos.opengles.GL10;
 import GameEngine.ChunkLoader;
 import GameEngine.GameObject;
 import GameEngine.Input;
+import GameEngine.ObjectManager;
 import GameEngine.TimeManager;
 import GamePlay.CameraController;
 import GamePlay.CityLayout;
@@ -36,6 +41,8 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
     public static World world;
     private FrameBuffer frameBuffer;
     private Light light;
+    public static int scoreNum = 0;
+    private TextView score;
 
     public static ArrayList<GameObject> objects = new ArrayList<>();
 
@@ -51,7 +58,22 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         glSurfaceView = new GLSurfaceView(this);
         glSurfaceView.setEGLContextClientVersion(2);
         glSurfaceView.setRenderer(this);
-        setContentView(glSurfaceView);
+
+        RelativeLayout layout = new RelativeLayout(getBaseContext());
+        layout.addView(glSurfaceView);
+
+        TextView t = new TextView(getBaseContext());
+        t.setText("0");
+        t.setTextColor(Color.WHITE);
+        t.setTextSize(32);
+        layout.addView(t);
+        t.setX(10);
+        t.setY(0);
+        t.setWidth(200);
+        t.setHeight(200);
+
+        setContentView(layout);
+        score = t;
 
         glSurfaceView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -122,7 +144,17 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         TextureManager.getInstance().addTexture("pineTree", pineTree);
         TextureManager.getInstance().addTexture("tree", tree);
 
-        Object3D ufo = Loader.load3DS(getResources().openRawResource(R.raw.ufo), 0.5f)[0];
+        ObjectManager.getSharedInstance().loadObject(Loader.load3DS(getResources().openRawResource(R.raw.bb), 0.4f), "bb");
+        ObjectManager.getSharedInstance().loadObject(Loader.load3DS(getResources().openRawResource(R.raw.b2), 0.4f), "b2");
+        ObjectManager.getSharedInstance().loadObject(Loader.loadOBJ(getResources().openRawResource(R.raw.ground), getResources().openRawResource(R.raw.groundmat), 1), "ground");
+        ObjectManager.getSharedInstance().loadObject(Loader.load3DS(getResources().openRawResource(R.raw.pinetree), 1), "pinetree");
+        ObjectManager.getSharedInstance().loadObject(Loader.load3DS(getResources().openRawResource(R.raw.roadsquare), 1), "roadsquare");
+        ObjectManager.getSharedInstance().loadObject(Loader.load3DS(getResources().openRawResource(R.raw.taxi), 0.2f), "taxi");
+        ObjectManager.getSharedInstance().loadObject(Loader.load3DS(getResources().openRawResource(R.raw.tractorbeam), 0.5f), "tractorbeam");
+        ObjectManager.getSharedInstance().loadObject(Loader.load3DS(getResources().openRawResource(R.raw.tree), 0.3f), "tree");
+        ObjectManager.getSharedInstance().loadObject(Loader.load3DS(getResources().openRawResource(R.raw.ufo), 0.5f), "ufo");
+
+        Object3D ufo = ObjectManager.getSharedInstance().getObject("ufo")[0];
         ufo.translate(2, -4, 0);
         ufo.setTexture("ufo");
         world.addObject(ufo);
@@ -130,7 +162,7 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         gUfo.addScript(new UFOController());
         this.objects.add(gUfo);
 
-        Object3D tractorBeam = Loader.load3DS(getResources().openRawResource(R.raw.tractorbeam), 0.5f)[0];
+        Object3D tractorBeam = ObjectManager.getSharedInstance().getObject("tractorbeam")[0];
         tractorBeam.translate(0, 2.8f, 0);
         tractorBeam.setTexture("tractorBeamTexture");
         tractorBeam.setTransparency(Object3D.TRANSPARENCY_MODE_ADD);
@@ -186,6 +218,12 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         for(GameObject go : objects){
             go.startScriptUpdate();
         }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                score.setText("" + scoreNum);
+            }
+        });
         CameraController.sharedInstance.update();
         world.renderScene(frameBuffer);
         world.draw(frameBuffer);
