@@ -112,7 +112,7 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         world = new World();
-        world.setAmbientLight(255, 255, 255);
+        world.setAmbientLight(200, 200, 200);
 
         Object3D[] objects = Loader.loadSerializedObjectArray(getResources().openRawResource(R.raw.objects));
         for(Object3D o : objects){
