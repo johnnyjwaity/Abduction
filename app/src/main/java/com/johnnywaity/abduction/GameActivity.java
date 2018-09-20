@@ -21,6 +21,7 @@ import com.threed.jpct.Texture;
 import com.threed.jpct.TextureManager;
 import com.threed.jpct.World;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -112,6 +113,45 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         world = new World();
         world.setAmbientLight(255, 255, 255);
+
+        Object3D[] objects = Loader.loadSerializedObjectArray(getResources().openRawResource(R.raw.objects));
+        for(Object3D o : objects){
+            float scale = 0;
+            switch(o.getName()){
+                case "bb":
+                    scale = 0.4f;
+                    break;
+                case "b2":
+                    scale = 0.4f;
+                    break;
+                case "ground":
+                    scale = 1;
+                    break;
+                case "pinetree":
+                    scale = 1;
+                    break;
+                case "roadsquare":
+                    scale = 1;
+                    break;
+                case "taxi":
+                    scale = 0.2f;
+                    break;
+                case "tractorbeam":
+                    scale = 0.5f;
+                    break;
+                case "tree":
+                    scale = 0.3f;
+                    break;
+                case "ufo":
+                    scale = 0.5f;
+                    break;
+            }
+            System.out.println(o.getName());
+            o.setScale(scale);
+            ObjectManager.getSharedInstance().loadObject(new Object3D[]{o}, o.getName());
+        }
+
+
         Texture grassBlock = new Texture(getResources().openRawResource(R.raw.grassblocktexture));
         Texture brownBuilding = new Texture(getResources().openRawResource(R.raw.btex));
         Texture blueTexture = new Texture(getResources().openRawResource(R.raw.bltex));
@@ -144,15 +184,6 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         TextureManager.getInstance().addTexture("pineTree", pineTree);
         TextureManager.getInstance().addTexture("tree", tree);
 
-        ObjectManager.getSharedInstance().loadObject(Loader.load3DS(getResources().openRawResource(R.raw.bb), 0.4f), "bb");
-        ObjectManager.getSharedInstance().loadObject(Loader.load3DS(getResources().openRawResource(R.raw.b2), 0.4f), "b2");
-        ObjectManager.getSharedInstance().loadObject(Loader.loadOBJ(getResources().openRawResource(R.raw.ground), getResources().openRawResource(R.raw.groundmat), 1), "ground");
-        ObjectManager.getSharedInstance().loadObject(Loader.load3DS(getResources().openRawResource(R.raw.pinetree), 1), "pinetree");
-        ObjectManager.getSharedInstance().loadObject(Loader.load3DS(getResources().openRawResource(R.raw.roadsquare), 1), "roadsquare");
-        ObjectManager.getSharedInstance().loadObject(Loader.load3DS(getResources().openRawResource(R.raw.taxi), 0.2f), "taxi");
-        ObjectManager.getSharedInstance().loadObject(Loader.load3DS(getResources().openRawResource(R.raw.tractorbeam), 0.5f), "tractorbeam");
-        ObjectManager.getSharedInstance().loadObject(Loader.load3DS(getResources().openRawResource(R.raw.tree), 0.3f), "tree");
-        ObjectManager.getSharedInstance().loadObject(Loader.load3DS(getResources().openRawResource(R.raw.ufo), 0.5f), "ufo");
 
         Object3D ufo = ObjectManager.getSharedInstance().getObject("ufo")[0];
         ufo.translate(2, -4, 0);
