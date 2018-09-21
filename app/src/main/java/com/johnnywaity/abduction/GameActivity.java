@@ -20,6 +20,7 @@ import com.threed.jpct.SimpleVector;
 import com.threed.jpct.Texture;
 import com.threed.jpct.TextureManager;
 import com.threed.jpct.World;
+import com.threed.jpct.util.SkyBox;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
     public static World world;
     private FrameBuffer frameBuffer;
     private Light light;
+    private RGBColor sky = new RGBColor(135, 206, 250);
     public static int scoreNum = 0;
     private TextView score;
 
@@ -167,6 +169,7 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         Texture purpleCar = new Texture(getResources().openRawResource(R.raw.carp));
         Texture pineTree = new Texture(64, 64, new RGBColor(0, 128, 0));
         Texture tree = new Texture(getResources().openRawResource(R.raw.lowpolytree));
+        Texture blue = new Texture(32, 32, new RGBColor(135, 206, 250));
 
         TextureManager.getInstance().addTexture("grassBlock", grassBlock);
         TextureManager.getInstance().addTexture("brownBuilding", brownBuilding);
@@ -183,6 +186,8 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         TextureManager.getInstance().addTexture("carb", blueCar);
         TextureManager.getInstance().addTexture("pineTree", pineTree);
         TextureManager.getInstance().addTexture("tree", tree);
+        TextureManager.getInstance().addTexture("blue", blue);
+
 
 
         Object3D ufo = ObjectManager.getSharedInstance().getObject("ufo")[0];
@@ -244,7 +249,7 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 gl) {
-        frameBuffer.clear();
+        frameBuffer.clear(sky);
         TimeManager.updateTime();
         for(GameObject go : objects){
             go.startScriptUpdate();

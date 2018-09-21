@@ -2,7 +2,7 @@ package GameEngine;
 
 public class TimeManager {
     private static long lastTime;
-    public static long deltaTime;
+    public static double deltaTime;
 
     public static void initialize(){
         lastTime = System.currentTimeMillis();
@@ -10,6 +10,9 @@ public class TimeManager {
 
     public static void updateTime(){
         deltaTime = System.currentTimeMillis() - lastTime;
+//        System.out.println(deltaTime);
+        deltaTime /= 1000;
         lastTime = System.currentTimeMillis();
+//        System.out.println(deltaTime);
     }
 }
