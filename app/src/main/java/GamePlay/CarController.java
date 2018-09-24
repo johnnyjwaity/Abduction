@@ -5,6 +5,7 @@ import com.threed.jpct.SimpleVector;
 
 import GameEngine.AttachableScript;
 import GameEngine.GameObject;
+import GameEngine.TimeManager;
 import GameEngine.Vector2;
 
 public class CarController implements AttachableScript {
@@ -12,7 +13,7 @@ public class CarController implements AttachableScript {
     private Vector2[] path;
     private int currentPosition;
 
-    private float speed = 0.1f;
+    private float speed = 3f;
 
     private GameObject gameObject;
 
@@ -38,7 +39,7 @@ public class CarController implements AttachableScript {
         }
 
         SimpleVector direction = GameObject.subtractVectors(gameObject.getObject().getTranslation(), new SimpleVector(destination.getX(), -1, destination.getY())).normalize();
-        direction.scalarMul(speed);
+        direction.scalarMul(speed * TimeManager.deltaTime);
         gameObject.getObject().translate(direction);
 
 

@@ -6,10 +6,11 @@ import com.threed.jpct.SimpleVector;
 
 import GameEngine.AttachableScript;
 import GameEngine.GameObject;
+import GameEngine.TimeManager;
 
 public class Atractable implements AttachableScript {
     private GameObject gameObject;
-    private float speed = 0.02f;
+    private float speed = 2f;
     @Override
     public void start() {
 
@@ -25,9 +26,9 @@ public class Atractable implements AttachableScript {
         }
         if(distance < 1){
             gameObject.disableOtherScripts(this);
-            gameObject.getObject().rotateY(0.01f);
-            gameObject.getObject().rotateX(0.01f);
-            gameObject.getObject().rotateZ(0.01f);
+            gameObject.getObject().rotateY(0.03f);
+            gameObject.getObject().rotateX(0.03f);
+            gameObject.getObject().rotateZ(0.03f);
 
             if(gameObject.getObject().getParents().length > 0){
                 Matrix world = gameObject.getObject().getWorldTransformation().cloneMatrix();
@@ -36,11 +37,11 @@ public class Atractable implements AttachableScript {
             }
 
             SimpleVector direction = GameObject.subtractVectors(gameObject.getObject().getTranslation(), UFOController.ufo.getObject().getTranslation()).normalize();
-            direction.scalarMul(speed);
+            direction.scalarMul(speed * TimeManager.deltaTime);
             gameObject.getObject().translate(direction);
             float yDistance = Math.abs(gameObject.getObject().getTranslation().y - UFOController.ufo.getObject().getTranslation().y);
-            if(yDistance < 0.5f){
-                float newScale = gameObject.getObject().getScale() - 0.1f;
+            if(yDistance < 1f){
+                float newScale = gameObject.getObject().getScale() - 0.01f;
                 if(newScale > 0){
                     gameObject.getObject().setScale(newScale);
                 }else{

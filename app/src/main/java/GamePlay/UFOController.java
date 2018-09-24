@@ -1,5 +1,7 @@
 package GamePlay;
 
+import com.threed.jpct.SimpleVector;
+
 import GameEngine.AttachableScript;
 import GameEngine.GameObject;
 import GameEngine.Input;
@@ -11,7 +13,7 @@ public class UFOController implements AttachableScript {
     public static GameObject ufo;
 
     private GameObject gameObject = null;
-    private final float velocity = 0.1f;
+    private final float velocity = 3f;
 
     @Override
     public void start() {
@@ -30,11 +32,12 @@ public class UFOController implements AttachableScript {
                 deltaY = 0;
             }
             Vector2 norm = new Vector2(deltaX, deltaY).getNormalizedVector();
+            SimpleVector v = new SimpleVector(norm.getX(), 0, -norm.getY());
+            v.rotateY((float) Math.PI / 4);
+            v.scalarMul(velocity * TimeManager.deltaTime);
 
 
-
-
-            gameObject.getObject().translate(norm.getX() * velocity, 0, -norm.getY() * velocity);
+            gameObject.getObject().translate(v);
         }
     }
 

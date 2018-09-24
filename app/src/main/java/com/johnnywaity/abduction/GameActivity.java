@@ -35,6 +35,7 @@ import GameEngine.ObjectManager;
 import GameEngine.TimeManager;
 import GamePlay.CameraController;
 import GamePlay.CityLayout;
+import GamePlay.HelicopterController;
 import GamePlay.UFOController;
 
 public class GameActivity extends Activity implements GLSurfaceView.Renderer {
@@ -139,13 +140,19 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
                     scale = 0.2f;
                     break;
                 case "tractorbeam":
-                    scale = 0.5f;
+                    scale = 1f;
                     break;
                 case "tree":
                     scale = 0.3f;
                     break;
                 case "ufo":
                     scale = 0.5f;
+                    break;
+                case "helicopter":
+                    scale = 0.2f;
+                    break;
+                case "helicopterblade":
+                    scale = 1;
                     break;
             }
             System.out.println(o.getName());
@@ -170,6 +177,7 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         Texture pineTree = new Texture(64, 64, new RGBColor(0, 128, 0));
         Texture tree = new Texture(getResources().openRawResource(R.raw.lowpolytree));
         Texture blue = new Texture(32, 32, new RGBColor(135, 206, 250));
+        Texture helicoptertex = new Texture(getResources().openRawResource(R.raw.helicoptertex));
 
         TextureManager.getInstance().addTexture("grassBlock", grassBlock);
         TextureManager.getInstance().addTexture("brownBuilding", brownBuilding);
@@ -187,6 +195,7 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         TextureManager.getInstance().addTexture("pineTree", pineTree);
         TextureManager.getInstance().addTexture("tree", tree);
         TextureManager.getInstance().addTexture("blue", blue);
+        TextureManager.getInstance().addTexture("helicoptertex", helicoptertex);
 
 
 
@@ -199,11 +208,26 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         this.objects.add(gUfo);
 
         Object3D tractorBeam = ObjectManager.getSharedInstance().getObject("tractorbeam")[0];
-        tractorBeam.translate(0, 2.8f, 0);
+        tractorBeam.translate(0, 6f, 0);
         tractorBeam.setTexture("tractorBeamTexture");
         tractorBeam.setTransparency(Object3D.TRANSPARENCY_MODE_ADD);
         world.addObject(tractorBeam);
         tractorBeam.addParent(ufo);
+
+        Object3D helicopter = ObjectManager.getSharedInstance().getObject("helicopter")[0];
+        helicopter.translate(2, -4, 2);
+        helicopter.setTexture("helicoptertex");
+        world.addObject(helicopter);
+
+
+        Object3D helicopterBlade = ObjectManager.getSharedInstance().getObject("helicopterblade")[0];
+        helicopterBlade.setTexture("helicoptertex");
+        world.addObject(helicopterBlade);
+        helicopterBlade.addParent(helicopter);
+
+        GameObject hg = new GameObject(helicopter);
+        hg.addScript(new HelicopterController(helicopterBlade));
+        this.objects.add(hg);
 
 
         Class[] chunks = {CityLayout.class};
