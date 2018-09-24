@@ -3,7 +3,9 @@ package com.johnnywaity.abduction;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.opengl.GLSurfaceView;
+import android.opengl.Matrix;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.view.MotionEvent;
@@ -36,6 +38,7 @@ import GameEngine.TimeManager;
 import GamePlay.CameraController;
 import GamePlay.CityLayout;
 import GamePlay.HelicopterController;
+import GamePlay.MissileController;
 import GamePlay.UFOController;
 
 public class GameActivity extends Activity implements GLSurfaceView.Renderer {
@@ -47,8 +50,11 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
     private RGBColor sky = new RGBColor(135, 206, 250);
     public static int scoreNum = 0;
     private TextView score;
+    private int health = 100;
+    private TextView healthView;
 
     public static ArrayList<GameObject> objects = new ArrayList<>();
+    public static ArrayList<GameObject> objectQueue = new ArrayList<>();
 
     private float originX;
 
@@ -64,6 +70,7 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         glSurfaceView.setRenderer(this);
 
         RelativeLayout layout = new RelativeLayout(getBaseContext());
+        setContentView(layout);
         layout.addView(glSurfaceView);
 
         TextView t = new TextView(getBaseContext());
@@ -76,8 +83,24 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         t.setWidth(200);
         t.setHeight(200);
 
-        setContentView(layout);
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+
+        TextView h = new TextView(getBaseContext());
+        h.setText("100%");
+        h.setTextColor(Color.WHITE);
+        h.setTextSize(32);
+        layout.addView(h);
+        h.setX(size.x - 230 - 10);
+        h.setY(0);
+        h.setWidth(230);
+        h.setHeight(200);
+        System.out.println(layout.getWidth());
+
+
+
         score = t;
+        healthView = h;
 
         glSurfaceView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -154,6 +177,9 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
                 case "helicopterblade":
                     scale = 1;
                     break;
+                case "missle":
+                    scale = 0.1f;
+                    break;
             }
             System.out.println(o.getName());
             o.setScale(scale);
@@ -178,6 +204,7 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         Texture tree = new Texture(getResources().openRawResource(R.raw.lowpolytree));
         Texture blue = new Texture(32, 32, new RGBColor(135, 206, 250));
         Texture helicoptertex = new Texture(getResources().openRawResource(R.raw.helicoptertex));
+        Texture missileTex = new Texture(getResources().openRawResource(R.raw.missletex));
 
         TextureManager.getInstance().addTexture("grassBlock", grassBlock);
         TextureManager.getInstance().addTexture("brownBuilding", brownBuilding);
@@ -196,6 +223,7 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         TextureManager.getInstance().addTexture("tree", tree);
         TextureManager.getInstance().addTexture("blue", blue);
         TextureManager.getInstance().addTexture("helicoptertex", helicoptertex);
+        TextureManager.getInstance().addTexture("missiletex");
 
 
 
@@ -228,6 +256,10 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         GameObject hg = new GameObject(helicopter);
         hg.addScript(new HelicopterController(helicopterBlade));
         this.objects.add(hg);
+
+
+
+
 
 
         Class[] chunks = {CityLayout.class};
@@ -278,6 +310,8 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         for(GameObject go : objects){
             go.startScriptUpdate();
         }
+        objects.addAll(objectQueue);
+        objectQueue.clear();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
