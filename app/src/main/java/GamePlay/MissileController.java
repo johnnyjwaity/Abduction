@@ -1,5 +1,6 @@
 package GamePlay;
 
+import com.johnnywaity.abduction.GameActivity;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
 
@@ -37,6 +38,7 @@ public class MissileController implements AttachableScript {
         }
 
         if(gameObject.getObject().getTranslation().distance(UFOController.ufo.getObject().getTranslation()) < 0.5f){
+            GameActivity.health -= 5;
             gameObject.remove();
         }
 

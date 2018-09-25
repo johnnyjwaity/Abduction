@@ -2,14 +2,16 @@ package com.johnnywaity.abduction;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.opengl.GLSurfaceView;
-import android.opengl.Matrix;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,9 +24,7 @@ import com.threed.jpct.SimpleVector;
 import com.threed.jpct.Texture;
 import com.threed.jpct.TextureManager;
 import com.threed.jpct.World;
-import com.threed.jpct.util.SkyBox;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -38,7 +38,6 @@ import GameEngine.TimeManager;
 import GamePlay.CameraController;
 import GamePlay.CityLayout;
 import GamePlay.HelicopterController;
-import GamePlay.MissileController;
 import GamePlay.UFOController;
 
 public class GameActivity extends Activity implements GLSurfaceView.Renderer {
@@ -50,16 +49,18 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
     private RGBColor sky = new RGBColor(135, 206, 250);
     public static int scoreNum = 0;
     private TextView score;
-    private int health = 100;
+    public static int health = 100;
     private TextView healthView;
 
     public static ArrayList<GameObject> objects = new ArrayList<>();
     public static ArrayList<GameObject> objectQueue = new ArrayList<>();
 
-    private float originX;
+    //Joystick
+    private ImageView joystickBackground;
+    private ImageView joystick;
 
 
-
+    
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -69,33 +70,38 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
         glSurfaceView.setEGLContextClientVersion(2);
         glSurfaceView.setRenderer(this);
 
-        RelativeLayout layout = new RelativeLayout(getBaseContext());
+        final RelativeLayout layout = new RelativeLayout(getBaseContext());
         setContentView(layout);
         layout.addView(glSurfaceView);
+
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/3Dventure.ttf");
 
         TextView t = new TextView(getBaseContext());
         t.setText("0");
         t.setTextColor(Color.WHITE);
-        t.setTextSize(32);
+        t.setTextSize(64);
         layout.addView(t);
         t.setX(10);
         t.setY(0);
-        t.setWidth(200);
+        t.setWidth(500);
         t.setHeight(200);
-
+        t.setTypeface(font);
         Point size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
 
         TextView h = new TextView(getBaseContext());
         h.setText("100%");
-        h.setTextColor(Color.WHITE);
-        h.setTextSize(32);
+        h.setTextColor(Color.GREEN);
+        h.setTextSize(64);
         layout.addView(h);
-        h.setX(size.x - 230 - 10);
+        h.setX(size.x - 500 - 10);
         h.setY(0);
-        h.setWidth(230);
+        h.setWidth(500);
         h.setHeight(200);
+
+        h.setTypeface(font);
         System.out.println(layout.getWidth());
+
 
 
 
@@ -109,13 +115,59 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
                     Input.IS_MOVING = true;
                     Input.ORIGIN_X = event.getRawX();
                     Input.ORIGIN_Y = event.getRawY();
+
+                    joystick = new ImageView(getBaseContext());
+                    joystick.setImageDrawable(getDrawable(R.drawable.joystick));
+                    joystick.setX(event.getRawX() - 100);
+                    joystick.setY(event.getRawY() - 100);
+                    RelativeLayout.LayoutParams p2 = new RelativeLayout.LayoutParams(200, 200);
+                    joystick.setLayoutParams(p2);
+                    joystick.setAlpha(1f);
+                    layout.addView(joystick);
+
+                    joystickBackground = new ImageView(getBaseContext());
+                    joystickBackground.setImageDrawable(getDrawable(R.drawable.joystick));
+                    joystickBackground.setX(event.getRawX() - 150);
+                    joystickBackground.setY(event.getRawY() - 150);
+                    RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(300, 300);
+                    joystickBackground.setLayoutParams(p);
+                    joystickBackground.setAlpha(0.5f);
+
+                    layout.addView(joystickBackground);
+
+                    layout.setClipChildren(false);
+
+
                 }
                 else if(event.getAction() == MotionEvent.ACTION_UP){
                     Input.IS_MOVING = false;
+
+                    ((ViewGroup)joystickBackground.getParent()).removeView(joystickBackground);
+                    ((ViewGroup)joystick.getParent()).removeView(joystick);
+
+
                     return true;
                 }
                 Input.X = event.getRawX();
                 Input.Y = event.getRawY();
+
+                SimpleVector originPosition = new SimpleVector(Input.ORIGIN_X, Input.ORIGIN_Y, 0);
+                SimpleVector fingerPosition = new SimpleVector(event.getRawX(), event.getRawY(), 0);
+
+                ((ViewGroup)joystick.getParent()).removeView(joystick);
+                if(originPosition.distance(fingerPosition) < 150){
+                    joystick.setX(event.getRawX() - 100);
+                    joystick.setY(event.getRawY() - 100);
+                }else{
+                    fingerPosition.sub(originPosition);
+                    SimpleVector normal = fingerPosition.normalize();
+                    normal.scalarMul(150);
+                    joystick.setX(originPosition.x + normal.x - 100);
+                    joystick.setY(originPosition.y + normal.y - 100);
+                }
+                layout.addView(joystick);
+
+
                 return true;
             }
         });
@@ -316,6 +368,18 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
             @Override
             public void run() {
                 score.setText("" + scoreNum);
+                healthView.setText(health + "%");
+                if(health <= 50){
+                    healthView.setTextColor(Color.YELLOW);
+                }
+                if(health <= 20){
+                    healthView.setTextColor(Color.RED);
+                }
+                System.out.println(scoreNum);
+
+                if(health <= 0){
+                    onPause();
+                }
             }
         });
         CameraController.sharedInstance.update();

@@ -20,7 +20,7 @@ public class HelicopterController implements AttachableScript {
     private float lastRotation = 0;
     private Object3D blades;
 
-    private float shootSpeed = 10;
+    private float shootSpeed = 2;
     private float shootTimer;
 
     public HelicopterController(Object3D blades){
